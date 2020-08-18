@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    env_file:
+      - server.env
+    depends_on:
+      - redis
+    networks:
+      - app
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    env_file:
+      - server.env
+    depends_on:
+      - redis
+    networks:
+      - app
+
+  redis:
+    image: "redis:5.0.9"
+    ports:
+        - 6379:6379
+    env_file:
+      - server.env
+    networks:
+      - app
+
+  nginx:
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - web
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  data-volume:
+    driver: local

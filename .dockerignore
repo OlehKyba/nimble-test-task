@@ -1,0 +1,6 @@
+*.rdb
+.git
+.cache
+.idea
+venv
+__pycache__
